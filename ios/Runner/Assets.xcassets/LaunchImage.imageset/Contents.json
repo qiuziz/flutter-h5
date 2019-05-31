@@ -1,0 +1,179 @@
+{
+  "images" : [
+    {
+      "idiom" : "iphone",
+      "filename" : "Default~iphone.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "iphone",
+      "subtype" : "retina4",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default@2x~iphone.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-568h@2x~iphone.png",
+      "subtype" : "retina4",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-667h.png",
+      "subtype" : "667h",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-1792h.png",
+      "subtype" : "1792h",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "iphone",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "iphone",
+      "subtype" : "retina4",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-736h.png",
+      "subtype" : "736h",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-2436h.png",
+      "subtype" : "2436h",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-2688h.png",
+      "subtype" : "2688h",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Landscape-No-StatusBar~ipad.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Landscape-No-StatusBar@2x~ipad.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default@2x~iphone.png",
+      "unassigned" : true,
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-568h@2x~iphone.png",
+      "unassigned" : true,
+      "subtype" : "retina4",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-Landscape-1792h.png",
+      "unassigned" : true,
+      "subtype" : "1792h",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-Landscape-736h.png",
+      "unassigned" : true,
+      "subtype" : "736h",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-Landscape-2436h.png",
+      "unassigned" : true,
+      "subtype" : "2436h",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "Default-Landscape-2688h.png",
+      "unassigned" : true,
+      "subtype" : "2688h",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Landscape~ipad.png",
+      "unassigned" : true,
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Landscape~ipad.png",
+      "unassigned" : true,
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-No-StatusBar~ipad.png",
+      "unassigned" : true,
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Portrait~ipad.png",
+      "unassigned" : true,
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Portrait~ipad.png",
+      "unassigned" : true,
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Landscape@2x~ipad.png",
+      "unassigned" : true,
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Landscape@2x~ipad.png",
+      "unassigned" : true,
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-No-StatusBar@2x~ipad.png",
+      "unassigned" : true,
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Portrait@2x~ipad.png",
+      "unassigned" : true,
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "Default-Portrait@2x~ipad.png",
+      "unassigned" : true,
+      "scale" : "2x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  }
+}
