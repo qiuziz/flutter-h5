@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_h5/container/home/home.dart';
-import 'package:flutter_h5/container/image-list/image-list.dart';
 
 import 'component/loading/loading.dart';
 
@@ -11,16 +10,17 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
+  // SystemChrome.setEnabledSystemUIOverlays([]);
   runApp(MyApp());
 }
 
 Map<String, WidgetBuilder> routes =  {
-  '/': (BuildContext context) => Home(),
-  '/image-list': (BuildContext context) => ImageList(),
+    '/': (_) => new WebViewDemoPage(url: "https://www.baidu.com",),
 };
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  
   @override
   Widget build(BuildContext context) {
     Loading.ctx = context; // 注入context
