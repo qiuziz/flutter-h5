@@ -1,5 +1,11 @@
-import 'dart:async';
-import 'dart:convert';
+/*
+ * @Author: qiuz
+ * @Github: <https://github.com/qiuziz>
+ * @Date: 2019-06-04 16:37:29
+ * @Last Modified by: qiuz
+ * @Last Modified time: 2019-06-04 16:38:27
+ */
+
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -24,7 +30,9 @@ class _HomeState extends State<Home> {
 
   void save(String url) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _inputHistory != null ? _inputHistory.insert(0, url) : _inputHistory = [url];
+    _inputHistory != null
+        ? _inputHistory.insert(0, url)
+        : _inputHistory = [url];
     prefs.setStringList('inputHistory', _inputHistory);
   }
 
@@ -40,9 +48,14 @@ class _HomeState extends State<Home> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
-      _inputHistory = prefs.getStringList('inputHistory')?.toList()?.reversed?.toList()?.toSet()?.toList();
+      _inputHistory = prefs
+          .getStringList('inputHistory')
+          ?.toList()
+          ?.reversed
+          ?.toList()
+          ?.toSet()
+          ?.toList();
     });
-    print(_inputHistory);
   }
 
   @override
@@ -52,13 +65,7 @@ class _HomeState extends State<Home> {
         title: Text('Flutter H5'),
         centerTitle: true,
       ),
-      // We're using a Builder here so we have a context that is below the Scaffold
-      // to allow calling Scaffold.of(context) so we can show a snackbar.
       body: Container(
-        // height: 100,
-        //    decoration: new BoxDecoration(
-        // border: new Border.all(color: Colors.black54, width: 1.0),
-        // borderRadius: new BorderRadius.circular(12.0)),
         child: Column(
           children: <Widget>[
             Padding(
@@ -70,21 +77,17 @@ class _HomeState extends State<Home> {
                   onSubmitted: (String value) {
                     save(value);
                     Navigator.push(
-                      context,
+                        context,
                         new MaterialPageRoute(
                             builder: (context) =>
-                                new WebViewPage(url: value)
-                        )
-                    );
+                                new WebViewPage(url: value, appBar: false)));
                   },
                   textInputAction: TextInputAction.go,
                   controller: _controller,
                   decoration: InputDecoration(
-                      // contentPadding: EdgeInsets.all(10.0),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-//            borderSide: BorderSide(color: Colors.red, width: 3.0, style: BorderStyle.solid)//没什么卵效果
-                      )),
+                    borderRadius: BorderRadius.circular(15.0),
+                  )),
                 ),
               ),
             ),
@@ -103,9 +106,9 @@ class _HomeState extends State<Home> {
                     : 0,
                 itemBuilder: (context, index) {
                   return new Dismissible(
-                    key: new Key(_inputHistory[index]),
-                     background: Text(''),
-                    secondaryBackground: Container(
+                      key: new Key(_inputHistory[index]),
+                      background: Text(''),
+                      secondaryBackground: Container(
                         child: Padding(
                           padding: const EdgeInsets.only(right: 20.0),
                           child: Row(
@@ -125,23 +128,20 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       onDismissed: (DismissDirection direction) {
-                          remove(index);
+                        remove(index);
                       },
-                    child: new ListTile(
+                      child: new ListTile(
                         title: Text(
-                                _inputHistory[index],
-                              ),
+                          _inputHistory[index],
+                        ),
                         onTap: () {
                           Navigator.push(
-                            context,
+                              context,
                               new MaterialPageRoute(
-                                  builder: (context) =>
-                                      new WebViewPage(url: _inputHistory[index])
-                              )
-                          );
+                                  builder: (context) => new WebViewPage(
+                                      url: _inputHistory[index])));
                         },
-                    )
-                  );
+                      ));
                 },
                 separatorBuilder: (context, index) => Divider(
                       height: .0,

@@ -11,13 +11,12 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
-  // SystemChrome.setEnabledSystemUIOverlays([]);
+  SystemChrome.setEnabledSystemUIOverlays([]);
   runApp(MyApp());
 }
 
 Map<String, WidgetBuilder> routes =  {
-    // '/': (_) => new Home(),
-    '/': (_) => new WebViewPage(url: "https://www.google.com",),
+    '/': (_) => new WebViewPage(url: "https://www.baidu.com", appBar: true,),
 };
 
 class MyApp extends StatelessWidget {

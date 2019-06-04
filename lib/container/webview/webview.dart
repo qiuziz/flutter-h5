@@ -7,32 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_h5/container/home/home.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-const String kNavigationExamplePage = '''
-<!DOCTYPE html><html>
-<head><title>Navigation Delegate Example</title></head>
-<script>
-function callFlutter(){
- NavtiveRoute.postMessage(JSON.stringify({method: 'PUSH', url: 'https://photo.qiuz.me'}));
-}
-</script>
-<body>
-<p>
-The navigation delegate is set to block navigation to the youtube website.
-</p>
-<ul>
-<ul><a href="https://www.youtube.com/">https://www.youtube.com/</a></ul>
-<ul><a href="https://www.google.com/">https://www.google.com/</a></ul>
-<ul><button onclick="callFlutter()">callFlutter</button>
-</ul>
-</ul>
-</body>
-</html>
-''';
-
 class WebViewPage extends StatefulWidget {
-  WebViewPage({Key key, this.url}) : super(key: key);
+  WebViewPage({Key key, this.url, this.appBar = false}) : super(key: key);
 
   final url;
+  final bool appBar;
+
   @override
   State<StatefulWidget> createState() => new _WebViewExampleState();
 }
@@ -42,13 +22,6 @@ class _WebViewExampleState extends State<WebViewPage> {
       Completer<WebViewController>();
   String _title = '';
   bool _loading = true;
-  num _stackToView = 1;
-
-  void _handleLoad() {
-    setState(() {
-      _stackToView = 0;
-    });
-  }
 
   @override
   void initState() {
@@ -57,62 +30,43 @@ class _WebViewExampleState extends State<WebViewPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.appBar);
     return Scaffold(
-      appBar: AppBar(
-        title: GestureDetector(
-          onTap: () {
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (context) =>
-                        new Home()));
-          },
-          child: Text(_title),
-        ),
-        centerTitle: true,
-        leading: NavigationControls(_controller.future, left: true),
-        // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
-        actions: <Widget>[
-          NavigationControls(
-            _controller.future,
-            left: false,
-            right: true,
-            replay: true,
+      appBar: widget.appBar ?
+        AppBar(
+          title: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) =>
+                          new Home()));
+            },
+            child: Text(_title),
           ),
-          // SampleMenu(_controller.future),
-        ],
-      ),
-      // We're using a Builder here so we have a context that is below the Scaffold
-      // to allow calling Scaffold.of(context) so we can show a snackbar.
+          centerTitle: true,
+          actions: <Widget>[
+            SampleMenu(_controller.future),
+          ],
+        )
+        : null,
       body: Builder(builder: (BuildContext context) {
         return IndexedStack(index: _loading ? 1 : 0, children: [
           Column(children: <Widget>[
             Expanded(
                 child: SafeArea(
               bottom: false,
+              top: false,
               child: WebView(
                   initialUrl: widget.url,
                   javascriptMode: JavascriptMode.unrestricted,
                   onWebViewCreated: (WebViewController webViewController) {
                     _controller.complete(webViewController);
                   },
-                  // ignore: prefer_collection_literals
                   javascriptChannels: <JavascriptChannel>[
                     _navtiveRouteJavascriptChannel(context),
                   ].toSet(),
                   navigationDelegate: (NavigationRequest request) {
-                    // print(request);
-                    // if (request.url == 'about:blank') {
-                    //   return NavigationDecision.prevent;
-                    // }
-                    // if (_url != null && _url != request.url && request.url != 'about:blank') {
-                    //   Navigator.push(
-                    //       context,
-                    //       new MaterialPageRoute(
-                    //           builder: (context) =>
-                    //               new WebViewPage(url: request.url)));
-                    //   return NavigationDecision.prevent;
-                    // }
                     setState(() {
                       _loading = true;
                     });
@@ -121,7 +75,6 @@ class _WebViewExampleState extends State<WebViewPage> {
                   },
                   onPageFinished: (String url) {
                     print('Page finished loading: $url');
-                    _handleLoad();
                     _controller.future.then((controller) {
                       controller
                           .evaluateJavascript('window.document.title')
@@ -164,88 +117,19 @@ class _WebViewExampleState extends State<WebViewPage> {
         });
   }
 
-  Widget favoriteButton() {
-    return FutureBuilder<WebViewController>(
-        future: _controller.future,
-        builder: (BuildContext context,
-            AsyncSnapshot<WebViewController> controller) {
-          if (controller.hasData) {
-            return FloatingActionButton(
-              onPressed: () async {
-                // showDialog(
-                //     context: context,
-                //     builder: (context) {
-                //       TextEditingController _textFieldController =
-                //           TextEditingController();
-                //       return AlertDialog(
-                //         title: Text('打开网页'),
-                //         content: TextField(
-                //           controller: _textFieldController,
-                //           decoration: InputDecoration(hintText: "网页地址"),
-                //         ),
-                //         actions: <Widget>[
-                //           new FlatButton(
-                //             child: new Text('确定'),
-                //             onPressed: () {
-                //               Navigator.push(
-                //                   context,
-                //                   new MaterialPageRoute(
-                //                       builder: (context) => new WebViewPage(
-                //                           url: _textFieldController.text)));
-                //              Navigator.of(context).pop();
-                //             },
-                //           ),
-                //           new FlatButton(
-                //             child: new Text('取消'),
-                //             onPressed: () {
-                //               Navigator.of(context).pop();
-                //             },
-                //           )
-                //         ],
-                //       );
-                //     });
-                Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                        builder: (context) =>
-                            new WebViewPage(url: 'https://qiuz.me')));
-              },
-              child: const Icon(Icons.add),
-            );
-          }
-          return Container();
-        });
-  }
-}
-
-Widget _createDialog(
-    String _confirmContent, Function sureFunction, Function cancelFunction) {
-  return CupertinoAlertDialog(
-    title: Text('提示'),
-    content: TextField(
-      decoration: InputDecoration(hintText: "TextField in Dialog"),
-    ),
-    actions: <Widget>[
-      FlatButton(
-        onPressed: sureFunction,
-        child: Text('确定', style: TextStyle(color: Colors.blue)),
-      ),
-      FlatButton(
-        onPressed: cancelFunction,
-        child: Text('取消', style: TextStyle(color: Colors.blue)),
-      ),
-    ],
-  );
 }
 
 enum MenuOptions {
-  showUserAgent,
-  listCookies,
-  clearCookies,
-  addToCache,
-  listCache,
-  clearCache,
-  navigationDelegate,
+  forword,
+  back,
+  refresh,
+  // showUserAgent,
+  // listCookies,
+  // clearCookies,
+  // addToCache,
+  // listCache,
+  // clearCache,
+  // navigationDelegate,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -263,58 +147,51 @@ class SampleMenu extends StatelessWidget {
         return PopupMenuButton<MenuOptions>(
           onSelected: (MenuOptions value) {
             switch (value) {
-              case MenuOptions.showUserAgent:
-                _onShowUserAgent(controller.data, context);
+              // case MenuOptions.showUserAgent:
+              //   _onShowUserAgent(controller.data, context);
+              //   break;
+              // case MenuOptions.listCookies:
+              //   _onListCookies(controller.data, context);
+              //   break;
+              // case MenuOptions.clearCookies:
+              //   _onClearCookies(context);
+              //   break;
+              // case MenuOptions.addToCache:
+              //   _onAddToCache(controller.data, context);
+              //   break;
+              // case MenuOptions.listCache:
+              //   _onListCache(controller.data, context);
+              //   break;
+              // case MenuOptions.clearCache:
+              //   _onClearCache(controller.data, context);
+              //   break;
+              // case MenuOptions.navigationDelegate:
+              //   _onNavigationDelegateExample(controller.data, context);
+              //   break;
+              case MenuOptions.forword:
+                controller.data.goForward();
                 break;
-              case MenuOptions.listCookies:
-                _onListCookies(controller.data, context);
+              case MenuOptions.refresh:
+                controller.data.reload();
                 break;
-              case MenuOptions.clearCookies:
-                _onClearCookies(context);
-                break;
-              case MenuOptions.addToCache:
-                _onAddToCache(controller.data, context);
-                break;
-              case MenuOptions.listCache:
-                _onListCache(controller.data, context);
-                break;
-              case MenuOptions.clearCache:
-                _onClearCache(controller.data, context);
-                break;
-              case MenuOptions.navigationDelegate:
-                _onNavigationDelegateExample(controller.data, context);
+              case MenuOptions.back:
+                controller.data.goBack();
                 break;
             }
           },
           itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
                 PopupMenuItem<MenuOptions>(
-                  value: MenuOptions.showUserAgent,
-                  child: const Text('Show user agent'),
+                  value: MenuOptions.forword,
+                  child: const Text('Forword'),
                   enabled: controller.hasData,
                 ),
                 const PopupMenuItem<MenuOptions>(
-                  value: MenuOptions.listCookies,
-                  child: Text('List cookies'),
+                  value: MenuOptions.refresh,
+                  child: Text('Refresh'),
                 ),
                 const PopupMenuItem<MenuOptions>(
-                  value: MenuOptions.clearCookies,
-                  child: Text('Clear cookies'),
-                ),
-                const PopupMenuItem<MenuOptions>(
-                  value: MenuOptions.addToCache,
-                  child: Text('Add to cache'),
-                ),
-                const PopupMenuItem<MenuOptions>(
-                  value: MenuOptions.listCache,
-                  child: Text('List cache'),
-                ),
-                const PopupMenuItem<MenuOptions>(
-                  value: MenuOptions.clearCache,
-                  child: Text('Clear cache'),
-                ),
-                const PopupMenuItem<MenuOptions>(
-                  value: MenuOptions.navigationDelegate,
-                  child: Text('Navigation Delegate example'),
+                  value: MenuOptions.back,
+                  child: Text('Back'),
                 ),
               ],
         );
@@ -376,13 +253,6 @@ class SampleMenu extends StatelessWidget {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
     ));
-  }
-
-  void _onNavigationDelegateExample(
-      WebViewController controller, BuildContext context) async {
-    final String contentBase64 =
-        base64Encode(const Utf8Encoder().convert(kNavigationExamplePage));
-    controller.loadUrl('data:text/html;base64,$contentBase64');
   }
 
   Widget _getCookieList(String cookies) {
