@@ -1,3 +1,11 @@
+/*
+ * @Author: qiuz
+ * @Github: <https://github.com/qiuziz>
+ * @Date: 2019-06-04 17:30:49
+ * @Last Modified by: qiuz
+ * @Last Modified time: 2019-06-04 17:34:21
+ */
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -6,9 +14,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_h5/container/home/home.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WebViewPage extends StatefulWidget {
-  WebViewPage({Key key, this.url, this.appBar = false}) : super(key: key);
+  WebViewPage({Key key, this.url, this.appBar}) : super(key: key);
 
   final url;
   final bool appBar;
@@ -22,17 +31,18 @@ class _WebViewExampleState extends State<WebViewPage> {
       Completer<WebViewController>();
   String _title = '';
   bool _loading = true;
-
+  var _controllerFeture;
   @override
   void initState() {
     super.initState();
+    print('aaaa${widget.appBar}');
   }
 
   @override
   Widget build(BuildContext context) {
     print(widget.appBar);
     return Scaffold(
-      appBar: widget.appBar ?
+      appBar: widget.appBar != null && widget.appBar ?
         AppBar(
           title: GestureDetector(
             onTap: () {
@@ -50,52 +60,72 @@ class _WebViewExampleState extends State<WebViewPage> {
           ],
         )
         : null,
-      body: Builder(builder: (BuildContext context) {
-        return IndexedStack(index: _loading ? 1 : 0, children: [
-          Column(children: <Widget>[
-            Expanded(
-                child: SafeArea(
-              bottom: false,
-              top: false,
-              child: WebView(
-                  initialUrl: widget.url,
-                  javascriptMode: JavascriptMode.unrestricted,
-                  onWebViewCreated: (WebViewController webViewController) {
-                    _controller.complete(webViewController);
-                  },
-                  javascriptChannels: <JavascriptChannel>[
-                    _navtiveRouteJavascriptChannel(context),
-                  ].toSet(),
-                  navigationDelegate: (NavigationRequest request) {
-                    setState(() {
-                      _loading = true;
-                    });
-                    print('allowing navigation to $request');
-                    return NavigationDecision.navigate;
-                  },
-                  onPageFinished: (String url) {
-                    print('Page finished loading: $url');
-                    _controller.future.then((controller) {
-                      controller
-                          .evaluateJavascript('window.document.title')
-                          .then((result) {
-                        setState(() {
-                          _title = result;
-                          _loading = false;
+      body:  WillPopScope(
+        onWillPop: () async {
+            if (await _controllerFeture.canGoBack()) {
+              _controllerFeture.goBack();
+              return false;
+            }
+           return true;
+          // if (await _controller.goback()) {
+          //   _lastPressedAt = DateTime.now();
+          //   return false;
+          // }
+        },
+        child: Builder(builder: (BuildContext context) {
+          return IndexedStack(index: _loading ? 1 : 0, children: [
+            Column(children: <Widget>[
+              Expanded(
+                  child: SafeArea(
+                bottom: false,
+                top: false,
+                child: WebView(
+                    initialUrl: widget.url,
+                    javascriptMode: JavascriptMode.unrestricted,
+                    onWebViewCreated: (WebViewController webViewController) {
+                      _controller.complete(webViewController);
+                      _controller.future.then((onValue) {
+                         _controllerFeture = onValue;
+                      });
+                      setState(() {
+                        _loading = true;
+                      });
+                    },
+                    javascriptChannels: <JavascriptChannel>[
+                      _navtiveRouteJavascriptChannel(context),
+                    ].toSet(),
+                    navigationDelegate: (NavigationRequest request) {
+                    if (request.url.split('://')[0].indexOf('http') < 0) {
+                      launch(request.url);
+                      return NavigationDecision.prevent;
+                    }
+                      print('allowing navigation to $request');
+                      return NavigationDecision.navigate;
+                    },
+                    onPageFinished: (String url) {
+                      print('Page finished loading: $url');
+                      _controller.future.then((controller) {
+                        controller
+                            .evaluateJavascript('window.document.title')
+                            .then((result) {
+                          setState(() {
+                            _title = result;
+                            _loading = false;
+                          });
                         });
                       });
-                    });
-                  }),
-            ))
-          ]),
-          Container(
-            color: Colors.white,
-            child: Center(
-              child: CircularProgressIndicator(),
+                    }),
+              ))
+            ]),
+            Container(
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-          ),
-        ]);
-      }),
+          ]);
+        }),
+      ),
     );
   }
 
