@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_h5/container/home/home.dart';
 import 'package:flutter_h5/container/webview/webview.dart';
 
 import 'component/loading/loading.dart';
@@ -16,7 +15,7 @@ void main() {
 }
 
 Map<String, WidgetBuilder> routes =  {
-    '/': (_) => new WebViewPage(url: "https://www.baidu.com", appBar: true,),
+    '/': (_) => new WebViewPage(url: "https://qiuz.me", appBar: true,),
 };
 
 class MyApp extends StatelessWidget {
