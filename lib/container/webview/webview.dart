@@ -3,7 +3,7 @@
  * @Github: <https://github.com/qiuziz>
  * @Date: 2019-06-04 17:30:49
  * @Last Modified by: qiuz
- * @Last Modified time: 2019-06-04 17:34:21
+ * @Last Modified time: 2019-06-04 17:56:25
  */
 
 import 'dart:async';
@@ -31,19 +31,22 @@ class _WebViewExampleState extends State<WebViewPage> {
       Completer<WebViewController>();
   String _title = '';
   bool _loading = true;
+  bool _appBar = false;
   var _controllerFeture;
   @override
   void initState() {
     super.initState();
-    print('aaaa${widget.appBar}');
+    setState(() {
+      _appBar = widget.appBar;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.appBar);
     return Scaffold(
-      appBar: widget.appBar != null && widget.appBar ?
+      appBar: _appBar ?
         AppBar(
+          elevation: 0,
           title: GestureDetector(
             onTap: () {
               Navigator.push(
@@ -61,17 +64,15 @@ class _WebViewExampleState extends State<WebViewPage> {
         )
         : null,
       body:  WillPopScope(
-        onWillPop: () async {
-            if (await _controllerFeture.canGoBack()) {
-              _controllerFeture.goBack();
-              return false;
+        onWillPop: _appBar
+          ? () async {
+              if (await _controllerFeture.canGoBack()) {
+                _controllerFeture.goBack();
+                return false;
+              }
+             return true;
             }
-           return true;
-          // if (await _controller.goback()) {
-          //   _lastPressedAt = DateTime.now();
-          //   return false;
-          // }
-        },
+          : null,
         child: Builder(builder: (BuildContext context) {
           return IndexedStack(index: _loading ? 1 : 0, children: [
             Column(children: <Widget>[
@@ -93,6 +94,7 @@ class _WebViewExampleState extends State<WebViewPage> {
                     },
                     javascriptChannels: <JavascriptChannel>[
                       _navtiveRouteJavascriptChannel(context),
+                      _appBarJavascriptChannel(context),
                     ].toSet(),
                     navigationDelegate: (NavigationRequest request) {
                     if (request.url.split('://')[0].indexOf('http') < 0) {
@@ -129,20 +131,44 @@ class _WebViewExampleState extends State<WebViewPage> {
     );
   }
 
+
+  void openWebViewPage(String url, bool appBar) {
+    Navigator.push(
+      context,
+      new CupertinoPageRoute(
+        builder: (context) => new WebViewPage(url: url, appBar: appBar)
+      )
+    );
+  }
+
   JavascriptChannel _navtiveRouteJavascriptChannel(BuildContext context) {
     return JavascriptChannel(
         name: 'NavtiveRoute',
         onMessageReceived: (JavascriptMessage result) {
           var res = json.decode(result.message);
           if (res['method'] == 'PUSH') {
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (context) =>
-                        new WebViewPage(url: res['url'])));
+            openWebViewPage(res['url'], res['appBar'] == '1');
           }
           if (res['method'] == 'POP') {
             Navigator.pop(context);
+          }
+        });
+  }
+
+  JavascriptChannel _appBarJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: 'AppBar',
+        onMessageReceived: (JavascriptMessage result) {
+          var res = json.decode(result.message);
+          if (res['toggle'] == '1') {
+            setState(() {
+              _appBar = true;
+            });
+          }
+          if (res['toggle'] == '0') {
+           setState(() {
+              _appBar = false;
+            });
           }
         });
   }

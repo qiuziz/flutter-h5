@@ -3,7 +3,7 @@
  * @Github: <https://github.com/qiuziz>
  * @Date: 2019-06-04 16:37:29
  * @Last Modified by: qiuz
- * @Last Modified time: 2019-06-04 17:20:27
+ * @Last Modified time: 2019-06-04 17:56:32
  */
 
 import 'dart:ui';
@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
     Navigator.push(
       context,
       new CupertinoPageRoute(
-        builder: (context) => new WebViewPage(url: url, appBar: true)
+        builder: (context) => new WebViewPage(url: url, appBar: false)
       )
     );
   }
